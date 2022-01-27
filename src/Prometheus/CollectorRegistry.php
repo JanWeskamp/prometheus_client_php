@@ -15,37 +15,37 @@ class CollectorRegistry implements RegistryInterface
      * @var CollectorRegistry
      */
     private static $defaultRegistry;
-
+    
     /**
      * @var Adapter
      */
     private $storageAdapter;
-
+    
     /**
      * @var Gauge[]
      */
     private $gauges = [];
-
+    
     /**
      * @var Counter[]
      */
     private $counters = [];
-
+    
     /**
      * @var Histogram[]
      */
     private $histograms = [];
-
+    
     /**
      * @var Summary[]
      */
     private $summaries = [];
-
+    
     /**
      * @var Gauge[]
      */
     private $defaultGauges = [];
-
+    
     /**
      * CollectorRegistry constructor.
      *
@@ -59,7 +59,7 @@ class CollectorRegistry implements RegistryInterface
             $this->registerDefaultMetrics();
         }
     }
-
+    
     /**
      * @return CollectorRegistry
      */
@@ -67,7 +67,7 @@ class CollectorRegistry implements RegistryInterface
     {
         return self::$defaultRegistry ?? (self::$defaultRegistry = new self(new Redis()));
     }
-
+    
     /**
      * @return MetricFamilySamples[]
      */
@@ -75,7 +75,7 @@ class CollectorRegistry implements RegistryInterface
     {
         return $this->storageAdapter->collect();
     }
-
+    
     /**
      * @param string $namespace e.g. cms
      * @param string $name e.g. duration_seconds
@@ -85,7 +85,7 @@ class CollectorRegistry implements RegistryInterface
      * @return Gauge
      * @throws MetricsRegistrationException
      */
-    public function registerGauge(string $namespace, string $name, string $help, $labels = []): Gauge
+    public function registerGauge(string $namespace, string $name, string $help, array $labels = []): Gauge
     {
         $metricIdentifier = self::metricIdentifier($namespace, $name);
         if (isset($this->gauges[$metricIdentifier])) {
@@ -100,7 +100,7 @@ class CollectorRegistry implements RegistryInterface
         );
         return $this->gauges[$metricIdentifier];
     }
-
+    
     /**
      * @param string $namespace
      * @param string $name
@@ -116,7 +116,7 @@ class CollectorRegistry implements RegistryInterface
         }
         return $this->gauges[$metricIdentifier];
     }
-
+    
     /**
      * @param string $namespace e.g. cms
      * @param string $name e.g. duration_seconds
@@ -126,7 +126,7 @@ class CollectorRegistry implements RegistryInterface
      * @return Gauge
      * @throws MetricsRegistrationException
      */
-    public function getOrRegisterGauge(string $namespace, string $name, string $help, $labels = []): Gauge
+    public function getOrRegisterGauge(string $namespace, string $name, string $help, array $labels = []): Gauge
     {
         try {
             $gauge = $this->getGauge($namespace, $name);
@@ -135,7 +135,7 @@ class CollectorRegistry implements RegistryInterface
         }
         return $gauge;
     }
-
+    
     /**
      * @param string $namespace e.g. cms
      * @param string $name e.g. requests
@@ -145,7 +145,7 @@ class CollectorRegistry implements RegistryInterface
      * @return Counter
      * @throws MetricsRegistrationException
      */
-    public function registerCounter(string $namespace, string $name, string $help, $labels = []): Counter
+    public function registerCounter(string $namespace, string $name, string $help, array $labels = []): Counter
     {
         $metricIdentifier = self::metricIdentifier($namespace, $name);
         if (isset($this->counters[$metricIdentifier])) {
@@ -160,7 +160,7 @@ class CollectorRegistry implements RegistryInterface
         );
         return $this->counters[self::metricIdentifier($namespace, $name)];
     }
-
+    
     /**
      * @param string $namespace
      * @param string $name
@@ -176,7 +176,7 @@ class CollectorRegistry implements RegistryInterface
         }
         return $this->counters[self::metricIdentifier($namespace, $name)];
     }
-
+    
     /**
      * @param string $namespace e.g. cms
      * @param string $name e.g. requests
@@ -186,7 +186,7 @@ class CollectorRegistry implements RegistryInterface
      * @return Counter
      * @throws MetricsRegistrationException
      */
-    public function getOrRegisterCounter(string $namespace, string $name, string $help, $labels = []): Counter
+    public function getOrRegisterCounter(string $namespace, string $name, string $help, array $labels = []): Counter
     {
         try {
             $counter = $this->getCounter($namespace, $name);
@@ -195,7 +195,7 @@ class CollectorRegistry implements RegistryInterface
         }
         return $counter;
     }
-
+    
     /**
      * @param string $namespace e.g. cms
      * @param string $name e.g. duration_seconds
@@ -227,7 +227,7 @@ class CollectorRegistry implements RegistryInterface
         );
         return $this->histograms[$metricIdentifier];
     }
-
+    
     /**
      * @param string $namespace
      * @param string $name
@@ -243,7 +243,7 @@ class CollectorRegistry implements RegistryInterface
         }
         return $this->histograms[self::metricIdentifier($namespace, $name)];
     }
-
+    
     /**
      * @param string $namespace e.g. cms
      * @param string $name e.g. duration_seconds
@@ -268,8 +268,8 @@ class CollectorRegistry implements RegistryInterface
         }
         return $histogram;
     }
-
-
+    
+    
     /**
      * @param string $namespace e.g. cms
      * @param string $name e.g. duration_seconds
@@ -304,7 +304,7 @@ class CollectorRegistry implements RegistryInterface
         );
         return $this->summaries[$metricIdentifier];
     }
-
+    
     /**
      * @param string $namespace
      * @param string $name
@@ -320,7 +320,7 @@ class CollectorRegistry implements RegistryInterface
         }
         return $this->summaries[self::metricIdentifier($namespace, $name)];
     }
-
+    
     /**
      * @param string $namespace e.g. cms
      * @param string $name e.g. duration_seconds
@@ -347,7 +347,7 @@ class CollectorRegistry implements RegistryInterface
         }
         return $summary;
     }
-
+    
     /**
      * @param string $namespace
      * @param string $name
@@ -358,7 +358,7 @@ class CollectorRegistry implements RegistryInterface
     {
         return $namespace . ":" . $name;
     }
-
+    
     private function registerDefaultMetrics(): void
     {
         $this->defaultGauges['php_info_gauge'] = $this->getOrRegisterGauge(
